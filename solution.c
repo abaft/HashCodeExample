@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-//#include "pcg-c/include/pcg_variants.h"
+#include "pcg-c/include/pcg_variants.h"
 
-#define DEPTH 1000000
+long DEPTH ;
 
 typedef struct _pizza
 {
@@ -97,10 +97,17 @@ char nullSlice (pizza *p, slice s)
 slice randomSlicer(pizza p)
 {
   slice rtn;
+  /*
   int r1 = rand()%p.R;
   int c1 = rand()%p.C;
   int r2 = rand()%p.R;
   int c2 = rand()%p.C;
+  */
+
+  int r1 = (int)pcg32_boundedrand(p.R);
+  int c1 = (int)pcg32_boundedrand(p.C);
+  int r2 = (int)pcg32_boundedrand(p.R);
+  int c2 = (int)pcg32_boundedrand(p.C);
 
   rtn.r1 = r1 <= r2 ? r1:r2;
   rtn.r2 = r1 > r2 ? r1:r2;
@@ -146,13 +153,13 @@ slice* sliceArrayGen (pizza p, int* n)
 int main(int argc, char** argv)
 {
 
-//  pcg32_srandom(42u, 54u);
+  pcg32_srandom(atoi(argv[2]), 54u );
+  DEPTH = atoi(argv[3]);
 
   int max = 0;
   int n;
   pizza p = parseFile(argv[1]);
   slice* s;
-  srand(time(NULL));
   do
   {
     s = sliceArrayGen(p, &n);
